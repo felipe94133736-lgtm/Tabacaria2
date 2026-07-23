@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Essence Tabacaria — Painel Administrativo</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#080808">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32.png">
+<link rel="shortcut icon" href="/assets/icons/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+
+<!-- Fraunces (display) + Inter (UI/corpo) — idêntico ao catálogo -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ================================================================
+   TOKENS — idênticos a todas as telas do catálogo (nenhuma cor alterada)
+   ================================================================ */
+:root{
+  --bg:            #080808;
+  --bg-elev:       #121110;
+  --card:          #141311;
+  --stroke:        rgba(212,175,55,0.16);
+  --stroke-strong: rgba(212,175,55,0.4);
+
+  --gold:          #d4af37;
+  --gold-light:    #f2d888;
+  --gold-dim:      #8a6a1e;
+  --orange:        #d2601a;
+  --orange-light:  #ff8a42;
+  --ember:         #e63946;
+  --purple:        #7b4fd6;
+  --green:         #25d366;
+  --blue:          #4c8bf5;
+
+  --text:          #f4efe4;
+  --text-muted:    #a49a8c;
+  --text-faint:    #6e665c;
+
+  --grad-gold: linear-gradient(135deg,#f2d888 0%,#d4af37 50%,#8a6a1e 100%);
+  --grad-fire: linear-gradient(135deg,#ff8a42 0%,#d2601a 55%,#8b1e1e 100%);
+  --ease: cubic-bezier(.22,1,.36,1);
+  --radius: 18px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  background: var(--bg); color: var(--text);
+  font-family:'Inter', sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{ font-family:'Fraunces', serif; letter-spacing:-0.01em; }
+a{ text-decoration:none; color:inherit; }
+ul{ list-style:none; }
+img{ display:block; max-width:100%; }
+button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+input, select, textarea{ font-family:inherit; }
+::selection{ background:var(--gold-dim); color:#fff; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
+  outline:2px solid var(--gold-light); outline-offset:2px; border-radius:6px;
+}
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-thumb{ background: rgba(212,175,55,0.25); border-radius:99px; }
+
+.fade-in{ animation: fadeIn .5s var(--ease); }
+@keyframes fadeIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+@keyframes popIn{ 0%{ transform:scale(.94); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+@keyframes rowOut{ to{ opacity:0; transform: scale(.97) translateX(12px); } }
+.row-out{ animation: rowOut .3s var(--ease) forwards; }
+@keyframes toastIn{ from{ opacity:0; transform: translateY(14px) scale(.96); } to{ opacity:1; transform:none; } }
+@keyframes toastOut{ to{ opacity:0; transform: translateX(30px); } }
+
+/* ================================================================
+   LOGIN — tela de acesso (demonstração)
+   ================================================================ */
+#loginScreen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(212,175,55,0.08), transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(210,96,26,0.08), transparent 45%), var(--bg);
+}
+.login-card{
+  width:100%; max-width:380px; background: var(--card); border:1px solid var(--stroke);
+  border-radius:24px; padding:34px 28px; box-shadow: 0 40px 90px -30px rgba(0,0,0,.8);
+}
+.login-brand{ display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:24px; }
+.login-brand svg{ width:44px; height:44px; }
+.login-brand .l1{ font-size:11px; letter-spacing:0.22em; font-weight:700; color:var(--text); }
+.login-brand .l2{
+  font-family:'Fraunces', serif; font-weight:700; font-size:22px;
+  background: var(--grad-gold); -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.login-brand .l3{ font-size:10px; letter-spacing:0.14em; color:var(--text-faint); text-transform:uppercase; margin-top:2px; }
+.login-field{ margin-bottom:14px; }
+.login-field label{ display:block; font-size:10.5px; font-weight:700; color: var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+.login-field input{
+  width:100%; background: var(--bg-elev); border:1px solid var(--stroke); border-radius:13px;
+  padding:12px 14px; color: var(--text); font-size:13px; outline:none;
+  transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
+}
+.login-field input:focus{ border-color: var(--stroke-strong); box-shadow: 0 0 0 3px rgba(212,175,55,0.1); }
+.login-submit{
+  width:100%; margin-top:6px; padding:13px; border-radius:14px; background: var(--grad-gold);
+  color:#1a1305; font-size:13.5px; font-weight:800; box-shadow: 0 14px 30px -12px rgba(212,175,55,0.55);
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.login-submit:hover{ transform:translateY(-2px); box-shadow: 0 18px 34px -12px rgba(212,175,55,0.65); }
+.login-notice{
+  display:flex; gap:9px; align-items:flex-start; margin-top:18px; padding:12px 13px; border-radius:13px;
+  background: rgba(210,96,26,0.08); border:1px solid rgba(210,96,26,0.25); font-size:11px; color: var(--text-muted); line-height:1.6;
+}
+.login-notice svg{ width:15px; height:15px; flex-shrink:0; color: var(--orange-light); margin-top:1px; }
+
+/* ================================================================
+   SHELL ADMINISTRATIVO — sidebar + topbar + conteúdo
+   ================================================================ */
+#adminApp{ display:none; }
+.admin-shell{ display:flex; min-height:100vh; }
+
+/* ---- SIDEBAR ---- */
+.sidebar{
+  width:250px; flex-shrink:0; background: var(--card); border-right:1px solid var(--stroke);
+  position:sticky; top:0; height:100vh; overflow-y:auto; display:flex; flex-direction:column;
+  transition: width .35s var(--ease);
+  z-index:80;
+}
+.sidebar.collapsed{ width:78px; }
+.sidebar-head{ display:flex; align-items:center; gap:11px; padding:20px 18px; border-bottom:1px solid var(--stroke); }
+.sidebar-head svg{ width:32px; height:32px; flex-shrink:0; }
+.sidebar-head .name{ line-height:1.1; overflow:hidden; white-space:nowrap; }
+.sidebar-head .name .l1{ font-size:9.5px; letter-spacing:0.2em; font-weight:700; color: var(--text-faint); }
+.sidebar-head .name .l2{ font-family:'Fraunces',serif; font-weight:700; font-size:15.5px; color: var(--gold-light); }
+.sidebar.collapsed .sidebar-head .name{ display:none; }
+
+.sidebar-nav{ padding:14px 12px; display:flex; flex-direction:column; gap:3px; flex:1; }
+.nav-item{
+  display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:13px;
+  font-size:13px; font-weight:600; color: var(--text-muted); white-space:nowrap; overflow:hidden;
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+.nav-item svg{ width:18px; height:18px; flex-shrink:0; }
+.nav-item:hover{ background: rgba(212,175,55,0.07); color: var(--text); }
+.nav-item.active{ background: rgba(212,175,55,0.12); color: var(--gold-light); box-shadow: inset 0 0 0 1px var(--stroke-strong); }
+.sidebar.collapsed .nav-item span{ display:none; }
+.nav-divider{ height:1px; background:var(--stroke); margin:10px 6px; }
+
+.sidebar-foot{ padding:14px 12px 18px; border-top:1px solid var(--stroke); }
+
+/* overlay para o menu deslizante no mobile */
+.sidebar-overlay{
+  display:none; position:fixed; inset:0; background: rgba(0,0,0,0.55); z-index:70;
+  opacity:0; transition: opacity .3s var(--ease);
+}
+.sidebar-overlay.show{ display:block; opacity:1; }
+
+/* ---- MAIN AREA ---- */
+.main-area{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.topbar{
+  position:sticky; top:0; z-index:60; display:flex; align-items:center; justify-content:space-between;
+  padding:14px 22px; background: rgba(8,8,8,0.9); backdrop-filter: blur(14px); border-bottom:1px solid var(--stroke);
+}
+.topbar-left{ display:flex; align-items:center; gap:14px; }
+.icon-btn{
+  width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+  background: var(--card); border:1px solid var(--stroke); color:var(--text);
+  transition: background .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease);
+}
+.icon-btn:hover{ background: rgba(212,175,55,0.1); border-color: var(--stroke-strong); }
+.icon-btn svg{ width:18px; height:18px; }
+.page-title{ font-size:18px; }
+.topbar-right{ display:flex; align-items:center; gap:10px; }
+.admin-avatar{
+  width:36px; height:36px; border-radius:50%; background: var(--grad-gold); color:#1a1305;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;
+}
+
+.content{ padding:22px; flex:1; }
+.view{ display:none; }
+.view.active{ display:block; }
+
+.section-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+.section-title{ font-size:16.5px; display:flex; align-items:center; gap:8px; }
+.section-title .dot{ width:6px; height:6px; border-radius:50%; background: var(--grad-fire); }
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:13px; font-size:12.5px; font-weight:700;
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease);
+}
+.btn svg{ width:15px; height:15px; }
+.btn-gold{ background: var(--grad-gold); color:#1a1305; box-shadow: 0 12px 26px -12px rgba(212,175,55,0.55); }
+.btn-gold:hover{ transform:translateY(-2px); box-shadow: 0 16px 30px -12px rgba(212,175,55,0.65); }
+.btn-ghost{ background: var(--card); border:1px solid var(--stroke); color: var(--text-muted); }
+.btn-ghost:hover{ border-color: var(--stroke-strong); color: var(--text); }
+.btn-danger{ background: rgba(230,57,70,0.12); border:1px solid rgba(230,57,70,0.3); color: var(--ember); }
+.btn-danger:hover{ background: rgba(230,57,70,0.2); }
+
+/* ================================================================
+   DASHBOARD — cartões de estatística + gráficos
+   ================================================================ */
+.stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:24px; }
+.stat-card{
+  background: var(--card); border:1px solid var(--stroke); border-radius:var(--radius); padding:18px;
+  transition: transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
+}
+.stat-card:hover{ transform:translateY(-3px); border-color: var(--stroke-strong); box-shadow: 0 16px 34px -22px rgba(212,175,55,0.35); }
+.stat-icon{
+  width:36px; height:36px; border-radius:11px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;
+}
+.stat-icon svg{ width:17px; height:17px; }
+.stat-value{ font-family:'Fraunces',serif; font-size:26px; font-weight:700; }
+.stat-label{ font-size:11.5px; color: var(--text-muted); margin-top:4px; }
+
+.chart-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:16px; }
+@media (max-width:900px){ .chart-grid{ grid-template-columns:1fr; } }
+.chart-card{ background: var(--card); border:1px solid var(--stroke); border-radius:var(--radius); padding:20px; }
+.chart-card h3{ font-size:14.5px; margin-bottom:16px; }
+
+.bar-chart{ display:flex; flex-direction:column; gap:13px; }
+.bar-row{ display:flex; flex-direction:column; gap:5px; }
+.bar-row .bar-label{ display:flex; justify-content:space-between; font-size:11.5px; color: var(--text-muted); }
+.bar-row .bar-label b{ color: var(--text); font-weight:700; }
+.bar-track{ height:9px; border-radius:99px; background: var(--bg-elev); overflow:hidden; }
+.bar-fill{ height:100%; border-radius:99px; background: var(--grad-fire); width:0; transition: width 1s var(--ease); }
+
+.donut-wrap{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:center; }
+.donut{ width:150px; height:150px; border-radius:50%; flex-shrink:0; transition: background 1s var(--ease); position:relative; }
+.donut::after{ content:''; position:absolute; inset:16px; border-radius:50%; background: var(--card); }
+.donut-legend{ display:flex; flex-direction:column; gap:9px; }
+.legend-item{ display:flex; align-items:center; gap:8px; font-size:12px; color: var(--text-muted); }
+.legend-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.legend-item b{ color: var(--text); }
+
+/* ================================================================
+   TABELAS
+   ================================================================ */
+.table-card{ background: var(--card); border:1px solid var(--stroke); border-radius:var(--radius); overflow:hidden; }
+.table-scroll{ overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; min-width:680px; }
+thead th{
+  text-align:left; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
+  color: var(--text-faint); padding:14px 16px; border-bottom:1px solid var(--stroke); white-space:nowrap;
+}
+tbody td{ padding:12px 16px; font-size:12.5px; border-bottom:1px solid rgba(212,175,55,0.08); vertical-align:middle; }
+tbody tr{ transition: background .25s var(--ease); }
+tbody tr:hover{ background: rgba(212,175,55,0.04); }
+tbody tr:last-child td{ border-bottom:none; }
+.cell-photo{
+  width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(circle at 65% 25%, rgba(212,175,55,0.22), transparent 65%), linear-gradient(155deg,#211d16,#0b0a09);
+}
+.cell-photo svg{ width:50%; height:50%; color: var(--orange-light); }
+.cell-name{ font-weight:700; color: var(--text); }
+.badge{ font-size:10px; font-weight:800; padding:4px 10px; border-radius:99px; display:inline-block; white-space:nowrap; }
+.badge-ok{ background: rgba(37,211,102,0.14); color: var(--green); }
+.badge-off{ background: rgba(230,57,70,0.14); color: var(--ember); }
+.badge-pending{ background: rgba(76,139,245,0.16); color: var(--blue); }
+.badge-progress{ background: rgba(210,96,26,0.16); color: var(--orange-light); }
+.row-actions{ display:flex; gap:6px; }
+.row-actions button{
+  width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+  background: var(--bg-elev); border:1px solid var(--stroke); color: var(--text-muted);
+  transition: color .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
+}
+.row-actions button svg{ width:14px; height:14px; }
+.row-actions button:hover{ color: var(--gold-light); border-color: var(--stroke-strong); }
+.row-actions .del:hover{ color: var(--ember); border-color: rgba(230,57,70,0.4); }
+
+/* ================================================================
+   CATEGORIAS — grid de cards
+   ================================================================ */
+.cat-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+.cat-card{ background: var(--card); border:1px solid var(--stroke); border-radius:var(--radius); padding:18px; transition: transform .3s var(--ease), border-color .3s var(--ease); }
+.cat-card:hover{ transform:translateY(-3px); border-color: var(--stroke-strong); }
+.cat-card-top{ display:flex; align-items:center; gap:11px; margin-bottom:12px; }
+.cat-icon-box{ width:38px; height:38px; border-radius:11px; background: rgba(212,175,55,0.1); color: var(--gold-light); display:flex; align-items:center; justify-content:center; }
+.cat-icon-box svg{ width:18px; height:18px; }
+.cat-card-name{ font-size:14px; font-weight:700; }
+.cat-card-count{ font-size:11px; color: var(--text-faint); margin-bottom:14px; }
+.cat-card-actions{ display:flex; gap:8px; }
+.cat-card-actions button{ flex:1; padding:8px; border-radius:10px; font-size:11px; font-weight:700; border:1px solid var(--stroke); color: var(--text-muted); transition: all .25s var(--ease); }
+.cat-card-actions button:hover{ border-color: var(--stroke-strong); color: var(--gold-light); }
+.cat-card-actions .del:hover{ color: var(--ember); border-color: rgba(230,57,70,0.4); }
+
+/* ================================================================
+   PROMOÇÕES
+   ================================================================ */
+.promo-grid{ display:flex; flex-direction:column; gap:12px; }
+.promo-card{
+  background: linear-gradient(155deg, rgba(210,96,26,0.08), rgba(20,19,17,0.4)), var(--card);
+  border:1px solid var(--stroke); border-radius:var(--radius); padding:18px;
+  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+}
+.promo-info h4{ font-size:14.5px; margin-bottom:4px; }
+.promo-info p{ font-size:11.5px; color: var(--text-muted); }
+.promo-percent{
+  font-family:'Fraunces',serif; font-size:24px; font-weight:700; color: var(--orange-light);
+  background: rgba(210,96,26,0.12); padding:8px 16px; border-radius:14px; flex-shrink:0;
+}
+
+/* ================================================================
+   FORMULÁRIOS (Configurações / Aparência)
+   ================================================================ */
+.settings-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width:760px){ .settings-grid{ grid-template-columns:1fr; } }
+.form-card{ background: var(--card); border:1px solid var(--stroke); border-radius:var(--radius); padding:20px; }
+.form-card h3{ font-size:14px; margin-bottom:16px; }
+.field-group{ margin-bottom:14px; }
+.field-group label{ display:block; font-size:10.5px; font-weight:700; color: var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+.field-group input[type=text], .field-group input[type=number], .field-group input[type=date], .field-group textarea, .field-group select{
+  width:100%; background: var(--bg-elev); border:1px solid var(--stroke); border-radius:13px;
+  padding:11px 13px; color: var(--text); font-size:12.5px; outline:none;
+  transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
+}
+.field-group input:focus, .field-group textarea:focus, .field-group select:focus{ border-color: var(--stroke-strong); box-shadow: 0 0 0 3px rgba(212,175,55,0.1); }
+.field-group textarea{ resize:none; min-height:70px; }
+.file-drop{
+  display:flex; align-items:center; gap:10px; border:1px dashed var(--stroke-strong); border-radius:13px;
+  padding:14px; background: var(--bg-elev); cursor:pointer; transition: background .25s var(--ease);
+}
+.file-drop:hover{ background: rgba(212,175,55,0.06); }
+.file-drop svg{ width:18px; height:18px; color: var(--gold-light); flex-shrink:0; }
+.file-drop span{ font-size:11.5px; color: var(--text-muted); }
+.file-drop input{ display:none; }
+
+.color-swatches{ display:flex; gap:10px; flex-wrap:wrap; }
+.swatch{ width:34px; height:34px; border-radius:50%; border:2px solid transparent; transition: transform .25s var(--ease), border-color .25s var(--ease); }
+.swatch:hover{ transform:scale(1.1); }
+.swatch.active{ border-color:#fff; }
+
+.theme-toggle{ display:flex; gap:10px; }
+.theme-opt{ flex:1; padding:16px; border-radius:14px; border:1px solid var(--stroke); background: var(--bg-elev); text-align:center; transition: all .3s var(--ease); }
+.theme-opt.active{ border-color: var(--stroke-strong); background: rgba(212,175,55,0.1); color: var(--gold-light); }
+.theme-opt span{ display:block; font-size:12px; font-weight:700; margin-top:8px; }
+.theme-opt .swatch-preview{ height:34px; border-radius:9px; margin:0 auto; }
+
+.style-opt-row{ display:flex; gap:10px; }
+.style-opt{ flex:1; padding:12px; border-radius:12px; border:1px solid var(--stroke); font-size:11.5px; font-weight:700; color: var(--text-muted); transition: all .3s var(--ease); }
+.style-opt.active{ border-color: var(--stroke-strong); color: var(--gold-light); background: rgba(212,175,55,0.08); }
+
+.switch-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 0; }
+.switch-row span{ font-size:12.5px; color: var(--text-muted); }
+.switch{ width:44px; height:25px; border-radius:99px; background: var(--bg-elev); border:1px solid var(--stroke); position:relative; transition: background .3s var(--ease); flex-shrink:0; }
+.switch::after{ content:''; position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:50%; background: var(--text-muted); transition: transform .3s var(--ease), background .3s var(--ease); }
+.switch.on{ background: rgba(212,175,55,0.25); border-color: var(--stroke-strong); }
+.switch.on::after{ transform:translateX(19px); background: var(--gold-light); }
+
+/* ================================================================
+   MODAL
+   ================================================================ */
+.modal-overlay{
+  display:none; position:fixed; inset:0; z-index:120; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
+  align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.show{ display:flex; }
+.modal-box{
+  width:100%; max-width:540px; max-height:88vh; overflow-y:auto; background: var(--card); border:1px solid var(--stroke-strong);
+  border-radius:22px; padding:24px; box-shadow: 0 40px 90px -20px rgba(0,0,0,0.8); animation: popIn .3s var(--ease);
+}
+.modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.modal-head h3{ font-size:17px; }
+.modal-close{ width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; background: var(--bg-elev); border:1px solid var(--stroke); color: var(--text-muted); }
+.modal-close svg{ width:14px; height:14px; }
+.modal-close:hover{ color: var(--ember); border-color: rgba(230,57,70,0.4); }
+.form-row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:460px){ .form-row2{ grid-template-columns:1fr; } }
+.checkbox-list{ display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto; border:1px solid var(--stroke); border-radius:13px; padding:10px; background: var(--bg-elev); }
+.checkbox-list label{ display:flex; align-items:center; gap:9px; font-size:12px; color: var(--text-muted); }
+.checkbox-list input{ accent-color: var(--gold); width:15px; height:15px; }
+.modal-actions{ display:flex; gap:10px; margin-top:20px; }
+.modal-actions .btn{ flex:1; justify-content:center; }
+
+/* ================================================================
+   TOASTS
+   ================================================================ */
+.toast-wrap{ position:fixed; bottom:20px; right:20px; z-index:200; display:flex; flex-direction:column; gap:10px; }
+.toast{
+  display:flex; align-items:center; gap:10px; background: var(--card); border:1px solid var(--stroke-strong);
+  border-radius:14px; padding:13px 16px; font-size:12.5px; font-weight:600; color: var(--text);
+  box-shadow: 0 20px 40px -16px rgba(0,0,0,0.6); animation: toastIn .35s var(--ease); min-width:230px;
+}
+.toast svg{ width:16px; height:16px; color: var(--green); flex-shrink:0; }
+.toast.err svg{ color: var(--ember); }
+
+/* ================================================================
+   RESPONSIVIDADE — mobile: sidebar vira menu deslizante
+   ================================================================ */
+@media (max-width:880px){
+  .sidebar{ position:fixed; left:0; top:0; transform:translateX(-100%); width:250px; box-shadow: 20px 0 50px rgba(0,0,0,0.5); }
+  .sidebar.mobile-open{ transform:translateX(0); }
+  .sidebar.collapsed{ width:250px; }
+  .sidebar.collapsed .nav-item span, .sidebar.collapsed .sidebar-head .name{ display:block; }
+  .desktop-collapse-btn{ display:none; }
+  .content{ padding:16px; }
+  .stat-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (min-width:881px){
+  .mobile-menu-btn{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     TELA DE LOGIN — apenas demonstração, sem autenticação real
+================================================================ -->
+<div id="loginScreen">
+  <div class="login-card fade-in">
+    <div class="login-brand">
+      <svg viewBox="0 0 48 48" fill="none">
+        <defs><linearGradient id="pg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#f2d888"/><stop offset=".55" stop-color="#d4af37"/><stop offset="1" stop-color="#d2601a"/>
+        </linearGradient></defs>
+        <path d="M24 4c0 0 3 8 3 13 0 3-1.5 5-3 6-1.5-1-3-3-3-6 0-5 3-13 3-13z" fill="url(#pg)"/>
+        <path d="M24 23c0 0-12 2-18 10 5-1 10-.5 13.5 1-4.5 3-7.5 8-7.5 8 7-1 13-5 15-9 1.5 4 5 7 10 9-1-5-4-10-8.5-12 4.5-1 10.5-.5 13.5 1-5-7-18-8-18-8z" fill="url(#pg)" opacity=".92"/>
+        <circle cx="24" cy="26" r="2.2" fill="#0d0705"/>
+      </svg>
+      <div class="l1">ESSENCE</div>
+      <div class="l2">Painel Administrativo</div>
+      <div class="l3">Acesso restrito</div>
+    </div>
+
+    <form id="loginForm">
+      <div class="login-field">
+        <label>E-mail</label>
+        <input type="email" placeholder="admin@essencetabacaria.com" required>
+      </div>
+      <div class="login-field">
+        <label>Senha</label>
+        <input type="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="login-submit">Entrar</button>
+    </form>
+
+    <div class="login-notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16.2" r=".4" fill="currentColor"/></svg>
+      <span>Este login é apenas um protótipo visual. Nenhuma autenticação real está sendo realizada — insira qualquer dado para continuar.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     PAINEL ADMINISTRATIVO
+================================================================ -->
+<div id="adminApp">
+  <div class="admin-shell">
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+         SIDEBAR
+    ============================================================ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 4c0 0 3 8 3 13 0 3-1.5 5-3 6-1.5-1-3-3-3-6 0-5 3-13 3-13z" fill="url(#pg)"/><path d="M24 23c0 0-12 2-18 10 5-1 10-.5 13.5 1-4.5 3-7.5 8-7.5 8 7-1 13-5 15-9 1.5 4 5 7 10 9-1-5-4-10-8.5-12 4.5-1 10.5-.5 13.5 1-5-7-18-8-18-8z" fill="url(#pg)" opacity=".9"/></svg>
+        <div class="name"><div class="l1">ESSENCE</div><div class="l2">Admin</div></div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="produtos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 8l-8-5-8 5v8l8 5 8-5V8z"/><path d="M12 12l8-4M12 12v9M12 12L4 8"/></svg>
+          <span>Produtos</span>
+        </button>
+        <button class="nav-item" data-view="categorias">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span>Categorias</span>
+        </button>
+        <button class="nav-item" data-view="promocoes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 12L12 20l-8-8V4h8l8 8z"/><circle cx="8" cy="8" r="1.4"/></svg>
+          <span>Promoções</span>
+        </button>
+        <button class="nav-item" data-view="pedidos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg>
+          <span>Pedidos</span>
+        </button>
+        <button class="nav-item" data-view="clientes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+          <span>Clientes</span>
+        </button>
+        <div class="nav-divider"></div>
+        <button class="nav-item" data-view="configuracoes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
+          <span>Configurações</span>
+        </button>
+        <button class="nav-item" data-view="aparencia">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 000 18 4.5 4.5 0 010-9 3 3 0 000-6"/></svg>
+          <span>Aparência</span>
+        </button>
+        <div class="nav-divider"></div>
+        <button class="nav-item" id="logoutBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          <span>Sair</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div class="cat-card-count" style="margin:0;">v1.0 — protótipo visual</div>
+      </div>
+    </aside>
+
+    <!-- ============================================================
+         ÁREA PRINCIPAL
+    ============================================================ -->
+    <div class="main-area">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+          <button class="icon-btn desktop-collapse-btn" id="collapseBtn" aria-label="Recolher menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h16"/></svg>
+          </button>
+          <h1 class="page-title" id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" aria-label="Notificações">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+          </button>
+          <div class="admin-avatar">ET</div>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- ========================================================
+             DASHBOARD
+        ======================================================== -->
+        <section class="view active" id="view-dashboard">
+          <div class="stat-grid" id="statGrid"></div>
+          <div class="chart-grid">
+            <div class="chart-card">
+              <h3>Produtos mais vendidos</h3>
+              <div class="bar-chart" id="bestSellersChart"></div>
+            </div>
+            <div class="chart-card">
+              <h3>Produtos por categoria</h3>
+              <div class="donut-wrap">
+                <div class="donut" id="categoryDonut"></div>
+                <div class="donut-legend" id="categoryLegend"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================================
+             PRODUTOS
+        ======================================================== -->
+        <section class="view" id="view-produtos">
+          <div class="section-head">
+            <div class="section-title"><span class="dot"></span>Gerenciar produtos</div>
+            <button class="btn btn-gold" id="newProductBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Novo Produto
+            </button>
+          </div>
+          <div class="table-card">
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr><th>Foto</th><th>Nome</th><th>Categoria</th><th>Marca</th><th>Preço</th><th>Estoque</th><th>Status</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="productsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================================
+             CATEGORIAS
+        ======================================================== -->
+        <section class="view" id="view-categorias">
+          <div class="section-head">
+            <div class="section-title"><span class="dot"></span>Categorias</div>
+            <button class="btn btn-gold" id="newCategoryBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Nova Categoria
+            </button>
+          </div>
+          <div class="cat-grid" id="categoryGrid"></div>
+        </section>
+
+        <!-- ========================================================
+             PROMOÇÕES
+        ======================================================== -->
+        <section class="view" id="view-promocoes">
+          <div class="section-head">
+            <div class="section-title"><span class="dot"></span>Promoções</div>
+            <button class="btn btn-gold" id="newPromoBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Nova Promoção
+            </button>
+          </div>
+          <div class="promo-grid" id="promoGrid"></div>
+        </section>
+
+        <!-- ========================================================
+             PEDIDOS (simulado)
+        ======================================================== -->
+        <section class="view" id="view-pedidos">
+          <div class="section-head"><div class="section-title"><span class="dot"></span>Pedidos recebidos</div></div>
+          <div class="table-card">
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Status</th><th>Data</th></tr></thead>
+                <tbody id="ordersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================================
+             CLIENTES (simulado)
+        ======================================================== -->
+        <section class="view" id="view-clientes">
+          <div class="section-head"><div class="section-title"><span class="dot"></span>Clientes</div></div>
+          <div class="table-card">
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Nome</th><th>Telefone</th><th>Pedidos</th><th>Total gasto</th></tr></thead>
+                <tbody id="clientsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================================
+             CONFIGURAÇÕES
+        ======================================================== -->
+        <section class="view" id="view-configuracoes">
+          <div class="section-head"><div class="section-title"><span class="dot"></span>Configurações da loja</div></div>
+          <div class="settings-grid">
+            <div class="form-card">
+              <h3>Identidade visual</h3>
+              <div class="field-group">
+                <label>Logo da tabacaria</label>
+                <label class="file-drop">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
+                  <span id="logoFileName">Clique para enviar uma imagem (simulado)</span>
+                  <input type="file" id="logoInput">
+                </label>
+              </div>
+              <div class="field-group">
+                <label>Banner principal</label>
+                <label class="file-drop">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
+                  <span id="bannerFileName">Clique para enviar uma imagem (simulado)</span>
+                  <input type="file" id="bannerInput">
+                </label>
+              </div>
+              <div class="field-group">
+                <label>Cor principal do catálogo</label>
+                <input type="text" id="settingsMainColor" value="#d4af37" placeholder="#d4af37">
+              </div>
+            </div>
+
+            <div class="form-card">
+              <h3>Contato e funcionamento</h3>
+              <div class="field-group"><label>Número do WhatsApp</label><input type="text" id="settingsWhatsapp" value="5511999999999"></div>
+              <div class="field-group"><label>Endereço</label><input type="text" id="settingsAddress" value="Rua das Essências, 123 — SP"></div>
+              <div class="field-group"><label>Horário de funcionamento</label><input type="text" id="settingsHours" value="Seg–Sáb, 12h às 22h"></div>
+              <div class="field-group"><label>Instagram</label><input type="text" id="settingsInstagram" value="@essencetabacariaa"></div>
+              <div class="field-group"><label>Texto do rodapé</label><textarea id="settingsFooter">Uma curadoria premium de narguilés, essências e acessórios para quem vive o ritual com sofisticação.</textarea></div>
+            </div>
+          </div>
+          <button class="btn btn-gold" id="saveSettingsBtn" style="margin-top:16px;">Salvar configurações</button>
+        </section>
+
+        <!-- ========================================================
+             APARÊNCIA
+        ======================================================== -->
+        <section class="view" id="view-aparencia">
+          <div class="section-head"><div class="section-title"><span class="dot"></span>Aparência do painel e catálogo</div></div>
+          <div class="settings-grid">
+            <div class="form-card">
+              <h3>Tema</h3>
+              <div class="theme-toggle">
+                <div class="theme-opt active" data-theme="escuro">
+                  <div class="swatch-preview" style="background:#141311;"></div>
+                  <span>Tema escuro</span>
+                </div>
+                <div class="theme-opt" data-theme="claro">
+                  <div class="swatch-preview" style="background:#f4efe4;"></div>
+                  <span>Tema claro</span>
+                </div>
+              </div>
+
+              <h3 style="margin-top:22px;">Cor principal</h3>
+              <div class="color-swatches" id="colorSwatches">
+                <div class="swatch active" data-color="#d4af37" style="background:#d4af37;"></div>
+                <div class="swatch" data-color="#d2601a" style="background:#d2601a;"></div>
+                <div class="swatch" data-color="#7b4fd6" style="background:#7b4fd6;"></div>
+                <div class="swatch" data-color="#25d366" style="background:#25d366;"></div>
+                <div class="swatch" data-color="#e63946" style="background:#e63946;"></div>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <h3>Estilo dos cards</h3>
+              <div class="style-opt-row">
+                <div class="style-opt active" data-style="arredondado">Cantos arredondados</div>
+                <div class="style-opt" data-style="reto">Cantos retos</div>
+              </div>
+
+              <h3 style="margin-top:22px;">Animações</h3>
+              <div class="switch-row">
+                <span>Ativar animações e transições</span>
+                <div class="switch on" id="animSwitch"></div>
+              </div>
+              <div class="switch-row">
+                <span>Efeito glassmorphism</span>
+                <div class="switch on" id="glassSwitch"></div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-gold" id="saveAppearanceBtn" style="margin-top:16px;">Salvar aparência</button>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     MODAL — PRODUTO (novo / editar / visualizar)
+================================================================ -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="productModalTitle">Novo Produto</h3>
+      <button class="modal-close" data-close="productModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form id="productForm">
+      <div class="field-group"><label>Nome do produto</label><input type="text" id="pName" required></div>
+      <div class="form-row2">
+        <div class="field-group"><label>Categoria</label>
+          <select id="pCategory"></select>
+        </div>
+        <div class="field-group"><label>Marca</label><input type="text" id="pBrand" required></div>
+      </div>
+      <div class="field-group"><label>Descrição</label><textarea id="pDesc" placeholder="Breve descrição do produto..."></textarea></div>
+      <div class="form-row2">
+        <div class="field-group"><label>Preço (R$)</label><input type="number" step="0.01" id="pPrice" required></div>
+        <div class="field-group"><label>Preço promocional (R$)</label><input type="number" step="0.01" id="pPromoPrice" placeholder="Opcional"></div>
+      </div>
+      <div class="form-row2">
+        <div class="field-group"><label>Quantidade em estoque</label><input type="number" id="pStock" required></div>
+        <div class="field-group"><label>Status</label>
+          <select id="pStatus"><option value="disponivel">Disponível</option><option value="esgotado">Esgotado</option></select>
+        </div>
+      </div>
+      <div class="form-row2">
+        <div class="field-group"><label>Destaque</label>
+          <select id="pFeatured"><option value="nao">Não</option><option value="sim">Sim</option></select>
+        </div>
+        <div class="field-group"><label>Imagem do produto</label>
+          <label class="file-drop">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
+            <span id="pImageName">Enviar (simulado)</span>
+            <input type="file" id="pImage">
+          </label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="productModal">Cancelar</button>
+        <button type="submit" class="btn btn-gold" id="productSaveBtn">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================================================================
+     MODAL — CATEGORIA
+================================================================ -->
+<div class="modal-overlay" id="categoryModal">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-head">
+      <h3 id="categoryModalTitle">Nova Categoria</h3>
+      <button class="modal-close" data-close="categoryModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form id="categoryForm">
+      <div class="field-group"><label>Nome da categoria</label><input type="text" id="cName" required></div>
+      <div class="field-group"><label>Ícone</label>
+        <select id="cIcon">
+          <option value="pods">Pods</option>
+          <option value="essencias">Essências</option>
+          <option value="narguiles">Narguilés</option>
+          <option value="acessorios">Acessórios</option>
+          <option value="geral">Geral</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="categoryModal">Cancelar</button>
+        <button type="submit" class="btn btn-gold">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================================================================
+     MODAL — PROMOÇÃO
+================================================================ -->
+<div class="modal-overlay" id="promoModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Nova Promoção</h3>
+      <button class="modal-close" data-close="promoModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form id="promoForm">
+      <div class="field-group"><label>Título da promoção</label><input type="text" id="prTitle" required></div>
+      <div class="form-row2">
+        <div class="field-group"><label>Percentual de desconto (%)</label><input type="number" id="prPercent" min="1" max="90" required></div>
+        <div class="field-group"></div>
+      </div>
+      <div class="form-row2">
+        <div class="field-group"><label>Data de início</label><input type="date" id="prStart" required></div>
+        <div class="field-group"><label>Data de término</label><input type="date" id="prEnd" required></div>
+      </div>
+      <div class="field-group">
+        <label>Produtos participantes</label>
+        <div class="checkbox-list" id="promoProductList"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="promoModal">Cancelar</button>
+        <button type="submit" class="btn btn-gold">Criar promoção</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Container de notificações toast -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-config.js"></script>
+<script>
+/* ================================================================
+   CONEXÃO COM O SUPABASE
+   Preencha window.SUPABASE_URL e window.SUPABASE_ANON_KEY em
+   /supabase-config.js (veja supabase-config.example.js). Não há
+   mais backend Node/Express: o painel conversa direto com o
+   Supabase (banco + storage de imagens) usando este cliente.
+   ================================================================ */
+const supabaseClient = (window.SUPABASE_URL && window.SUPABASE_ANON_KEY)
+  ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY)
+  : null;
+
+const UPLOAD_BUCKET = 'essence-uploads';
+
+function checarSupabase(){
+  if (!supabaseClient) throw new Error('Configure /supabase-config.js com a URL e a chave do seu projeto Supabase.');
+}
+
+// Envia um arquivo de imagem para o Supabase Storage e devolve a URL pública.
+async function uploadImagem(file, pasta){
+  if (!file) return null;
+  checarSupabase();
+  const extensao = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const nomeUnico = `${pasta}/${Date.now()}-${Math.round(Math.random() * 1e9)}.${extensao}`;
+  const { error } = await supabaseClient.storage.from(UPLOAD_BUCKET).upload(nomeUnico, file, { upsert: true });
+  if (error) throw new Error('Falha ao enviar imagem: ' + error.message);
+  const { data } = supabaseClient.storage.from(UPLOAD_BUCKET).getPublicUrl(nomeUnico);
+  return data.publicUrl;
+}
+
+// Gera um slug único a partir do nome — mesmo comportamento da etapa anterior (backend Node).
+function gerarChaveCategoria(nome){
+  const base = nome
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+  return `${base}-${Date.now().toString(36)}`;
+}
+
+function urlImagem(caminho) {
+  if (!caminho) return '';
+  return caminho;
+}
+
+/* ================================================================
+   ÍCONES POR CATEGORIA — reaproveitados do catálogo
+   ================================================================ */
+const CAT_ICONS = {
+  pods:        `<rect x="7" y="2" width="10" height="20" rx="4"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h6"/>`,
+  essencias:   `<path d="M9 3h6l1 4v2a5 5 0 01-3 4.6V19h2v2H9v-2h2v-5.4A5 5 0 018 9V7l1-4z"/>`,
+  narguiles:   `<path d="M12 2v5"/><circle cx="12" cy="10" r="4"/><path d="M8 14c0 3-3 3-3 6h4M16 14c0 3 3 3 3 6h-4"/><path d="M9 20h6"/>`,
+  acessorios:  `<path d="M14.7 3.3a4 4 0 00-5.4 5.4L3 15v4h4l6.3-6.3a4 4 0 005.4-5.4l-3 3-2-2 3-3z"/>`,
+  geral:       `<circle cx="12" cy="12" r="8"/>`,
+};
+const CAT_COLORS = { pods:'#d4af37', essencias:'#ff8a42', narguiles:'#7b4fd6', acessorios:'#25d366', geral:'#4c8bf5' };
+
+/* ================================================================
+   ESTADO DA APLICAÇÃO — carregado do banco via API
+   ================================================================ */
+let CATEGORIES = [];   // { id, chave, nome, icone, ... } — usamos "chave" como identificador
+let PRODUCTS = [];      // vindos da tabela "produtos" no Supabase
+let PROMOTIONS = [];    // vindos da tabela "promocoes" no Supabase
+let CONFIG = null;      // vindo da tabela "configuracoes" no Supabase
+
+// Pedidos e clientes ainda não têm tabela própria no banco (fora do escopo
+// deste prompt) — seguem como demonstração visual do painel.
+const ORDERS = [
+  { id:"#1042", client:"Marina Souza",   items:3, total:284.7, status:'entregue',  date:"20/07/2026" },
+  { id:"#1043", client:"Rafael Lima",    items:1, total:389.0, status:'preparo',   date:"21/07/2026" },
+  { id:"#1044", client:"Bianca Alves",   items:2, total:128.8, status:'pendente',  date:"21/07/2026" },
+  { id:"#1045", client:"Diego Ferreira", items:4, total:412.5, status:'entregue',  date:"19/07/2026" },
+  { id:"#1046", client:"Carla Nunes",    items:1, total:59.9,  status:'cancelado', date:"18/07/2026" },
+];
+const CLIENTS = [
+  { name:"Marina Souza",   phone:"(11) 98888-1122", orders:5, total:1240.5 },
+  { name:"Rafael Lima",    phone:"(11) 97777-3344", orders:2, total:678.0  },
+  { name:"Bianca Alves",   phone:"(11) 96666-5566", orders:3, total:395.4  },
+  { name:"Diego Ferreira", phone:"(11) 95555-7788", orders:7, total:2110.9 },
+  { name:"Carla Nunes",    phone:"(11) 94444-9900", orders:1, total:59.9   },
+];
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+function fmtPrice(v){ return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+
+// Escapa texto antes de inserir em innerHTML — mesma proteção usada no catálogo.
+const ESC_MAP = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
+function esc(str){ return String(str ?? '').replace(/[&<>"']/g, (c) => ESC_MAP[c]); }
+function catLabel(chave){ const c = CATEGORIES.find(c=>c.chave===chave); return c ? c.nome : chave; }
+function catIcon(chave){ return CAT_ICONS[chave] || CAT_ICONS.geral; }
+function fmtDate(iso){ if(!iso) return '-'; const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; }
+
+function showToast(msg, ok=true){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast' + (ok?'':' err');
+  el.innerHTML = (ok
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`)
+    + `<span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{
+    el.style.animation = 'toastOut .3s var(--ease) forwards';
+    setTimeout(()=>el.remove(), 300);
+  }, 3200);
+}
+
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('[data-close]').forEach(btn=>{
+  btn.addEventListener('click', ()=>closeModal(btn.dataset.close));
+});
+document.querySelectorAll('.modal-overlay').forEach(ov=>{
+  ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.classList.remove('show'); });
+});
+
+/* ================================================================
+   LOGIN — simulação (sem autenticação real, conforme protótipo)
+   ================================================================ */
+document.getElementById('loginForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminApp').style.display = 'block';
+  await initAdmin();
+});
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  document.getElementById('adminApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+});
+
+/* ================================================================
+   NAVEGAÇÃO — troca de telas via menu lateral
+   ================================================================ */
+const PAGE_TITLES = {
+  dashboard:'Dashboard', produtos:'Produtos', categorias:'Categorias', promocoes:'Promoções',
+  pedidos:'Pedidos', clientes:'Clientes', configuracoes:'Configurações', aparencia:'Aparência',
+};
+document.querySelectorAll('.nav-item[data-view]').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const view = item.dataset.view;
+    document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.classList.remove('active'));
+    item.classList.add('active');
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+view).classList.add('active');
+    document.getElementById('pageTitle').textContent = PAGE_TITLES[view];
+    closeMobileSidebar();
+  });
+});
+
+/* ================================================================
+   SIDEBAR — recolhível (desktop) / deslizante (mobile)
+   ================================================================ */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+document.getElementById('collapseBtn').addEventListener('click', ()=>{
+  sidebar.classList.toggle('collapsed');
+});
+document.getElementById('mobileMenuBtn').addEventListener('click', ()=>{
+  sidebar.classList.add('mobile-open');
+  overlay.classList.add('show');
+});
+function closeMobileSidebar(){
+  sidebar.classList.remove('mobile-open');
+  overlay.classList.remove('show');
+}
+overlay.addEventListener('click', closeMobileSidebar);
+
+/* ================================================================
+   DASHBOARD — cartões + gráficos (dados vindos do banco)
+   ================================================================ */
+function renderDashboard(){
+  const total = PRODUCTS.length;
+  const promoCount = PRODUCTS.filter(p=>p.precoPromocional).length;
+  const featuredCount = PRODUCTS.filter(p=>p.destaque).length;
+  const catCount = CATEGORIES.length;
+  const orderCount = ORDERS.length;
+  const outOfStock = PRODUCTS.filter(p=>p.estoque===0).length;
+
+  const stats = [
+    { label:'Total de produtos', value: total, icon:`<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>`, color: 'var(--gold-light)', bg:'rgba(212,175,55,0.12)' },
+    { label:'Em promoção', value: promoCount, icon:`<path d="M20 12L12 20l-8-8V4h8l8 8z"/><circle cx="8" cy="8" r="1.4"/>`, color:'var(--orange-light)', bg:'rgba(210,96,26,0.14)' },
+    { label:'Em destaque', value: featuredCount, icon:`<path d="M12 2l2.9 6.6 7.1.7-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.3l7.1-.7L12 2z"/>`, color:'var(--gold-light)', bg:'rgba(212,175,55,0.12)' },
+    { label:'Categorias', value: catCount, icon:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>`, color:'var(--purple)', bg:'rgba(123,79,214,0.14)' },
+    { label:'Pedidos recebidos', value: orderCount, icon:`<path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 016 0v2"/>`, color:'var(--blue)', bg:'rgba(76,139,245,0.14)' },
+    { label:'Sem estoque', value: outOfStock, icon:`<circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/>`, color:'var(--ember)', bg:'rgba(230,57,70,0.14)' },
+  ];
+
+  document.getElementById('statGrid').innerHTML = stats.map(s=>`
+    <div class="stat-card">
+      <div class="stat-icon" style="background:${s.bg}; color:${s.color};">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">${s.icon}</svg>
+      </div>
+      <div class="stat-value">${s.value}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>
+  `).join('');
+
+  // gráfico de barras — produtos com maior estoque vendido estimado (por preço * (1 - estoque/100), fallback simples)
+  const maisVendidos = [...PRODUCTS].filter(p=>p.maisVendido).slice(0,5);
+  const listaBarras = (maisVendidos.length ? maisVendidos : PRODUCTS.slice(0,5));
+  const maxEstoque = Math.max(1, ...listaBarras.map(p=>p.estoque||0));
+  document.getElementById('bestSellersChart').innerHTML = listaBarras.length ? listaBarras.map(p=>`
+    <div class="bar-row">
+      <div class="bar-label"><span>${p.nome}</span><b>${p.estoque} un. em estoque</b></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${((p.estoque||0)/maxEstoque*100).toFixed(0)}%;"></div></div>
+    </div>
+  `).join('') : `<p style="font-size:12px; color:var(--text-faint);">Cadastre produtos para ver este gráfico.</p>`;
+
+  // donut — produtos por categoria
+  const counts = CATEGORIES.map(c=>({ ...c, count: PRODUCTS.filter(p=>p.categoria===c.chave).length }));
+  const totalCount = counts.reduce((s,c)=>s+c.count,0) || 1;
+  let acc = 0;
+  const segments = counts.map(c=>{
+    const start = acc/totalCount*360;
+    acc += c.count;
+    const end = acc/totalCount*360;
+    return `${CAT_COLORS[c.icone] || CAT_COLORS.geral} ${start}deg ${end}deg`;
+  });
+  document.getElementById('categoryDonut').style.background = `conic-gradient(${segments.join(',')})`;
+  document.getElementById('categoryLegend').innerHTML = counts.map(c=>`
+    <div class="legend-item"><span class="legend-dot" style="background:${CAT_COLORS[c.icone] || CAT_COLORS.geral};"></span>${c.nome}: <b>${c.count}</b></div>
+  `).join('');
+}
+
+/* ================================================================
+   PRODUTOS — tabela + modal (novo / editar / visualizar)
+   ================================================================ */
+function renderProductCategorySelect(){
+  document.getElementById('pCategory').innerHTML = CATEGORIES.map(c=>`<option value="${esc(c.chave)}">${esc(c.nome)}</option>`).join('');
+}
+
+function renderProductsTable(){
+  const tbody = document.getElementById('productsTableBody');
+  tbody.innerHTML = PRODUCTS.map(p=>`
+    <tr id="prow-${p.id}">
+      <td><div class="cell-photo">${p.imagem ? `<img src="${urlImagem(p.imagem)}" alt="${esc(p.nome)}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">${catIcon(p.categoria)}</svg>`}</div></td>
+      <td class="cell-name">${esc(p.nome)}</td>
+      <td>${esc(catLabel(p.categoria))}</td>
+      <td>${esc(p.marca||'-')}</td>
+      <td>${fmtPrice(p.precoPromocional || p.preco)}${p.precoPromocional ? ` <span style="color:var(--text-faint); text-decoration:line-through; font-size:10.5px;">${fmtPrice(p.preco)}</span>` : ''}</td>
+      <td>${p.estoque}</td>
+      <td><span class="badge ${p.status==='disponivel' && p.estoque>0 ?'badge-ok':'badge-off'}">${p.estoque>0 ? (p.status==='disponivel'?'Disponível':'Inativo') : 'Esgotado'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button data-act="view" data-id="${p.id}" aria-label="Visualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button data-act="edit" data-id="${p.id}" aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>
+          <button class="del" data-act="del" data-id="${p.id}" aria-label="Excluir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2m-8 0l1 13h8l1-13"/></svg></button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  tbody.querySelectorAll('[data-act]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = parseInt(btn.dataset.id);
+      if(btn.dataset.act==='del') deleteProduct(id);
+      if(btn.dataset.act==='edit') openProductModal(id, false);
+      if(btn.dataset.act==='view') openProductModal(id, true);
+    });
+  });
+}
+
+let editingProductId = null;
+function openProductModal(id=null, readonly=false){
+  editingProductId = id;
+  renderProductCategorySelect();
+  const form = document.getElementById('productForm');
+  const saveBtn = document.getElementById('productSaveBtn');
+  const title = document.getElementById('productModalTitle');
+
+  if(id){
+    const p = PRODUCTS.find(x=>x.id===id);
+    document.getElementById('pName').value = p.nome;
+    document.getElementById('pCategory').value = p.categoria;
+    document.getElementById('pBrand').value = p.marca || '';
+    document.getElementById('pDesc').value = p.descricao || '';
+    document.getElementById('pPrice').value = p.preco;
+    document.getElementById('pPromoPrice').value = p.precoPromocional || '';
+    document.getElementById('pStock').value = p.estoque;
+    document.getElementById('pStatus').value = p.status || 'disponivel';
+    document.getElementById('pFeatured').value = p.destaque ? 'sim' : 'nao';
+    document.getElementById('pImageName').textContent = p.imagem ? 'Imagem já cadastrada — envie outra para substituir' : 'Enviar imagem';
+    title.textContent = readonly ? 'Visualizar Produto' : 'Editar Produto';
+  } else {
+    form.reset();
+    document.getElementById('pImageName').textContent = 'Enviar imagem';
+    title.textContent = 'Novo Produto';
+  }
+
+  form.querySelectorAll('input, select, textarea').forEach(el=> el.disabled = readonly);
+  saveBtn.style.display = readonly ? 'none' : 'inline-flex';
+  openModal('productModal');
+}
+
+document.getElementById('newProductBtn').addEventListener('click', ()=>openProductModal(null,false));
+
+document.getElementById('productForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const saveBtn = document.getElementById('productSaveBtn');
+  saveBtn.disabled = true;
+
+  try {
+    checarSupabase();
+    const precoPromoRaw = document.getElementById('pPromoPrice').value;
+    const payload = {
+      nome: document.getElementById('pName').value,
+      categoria: document.getElementById('pCategory').value,
+      marca: document.getElementById('pBrand').value || null,
+      descricao: document.getElementById('pDesc').value || null,
+      preco: parseFloat(document.getElementById('pPrice').value) || 0,
+      precoPromocional: precoPromoRaw === '' ? null : parseFloat(precoPromoRaw),
+      estoque: parseInt(document.getElementById('pStock').value, 10) || 0,
+      status: document.getElementById('pStatus').value,
+      destaque: document.getElementById('pFeatured').value === 'sim',
+    };
+    const arquivoImagem = document.getElementById('pImage').files[0];
+    if (arquivoImagem) payload.imagem = await uploadImagem(arquivoImagem, 'produtos');
+
+    if (editingProductId) {
+      const { error } = await supabaseClient.from('produtos').update(payload).eq('id', editingProductId);
+      if (error) throw new Error(error.message);
+    } else {
+      const { error } = await supabaseClient.from('produtos').insert(payload);
+      if (error) throw new Error(error.message);
+    }
+    await carregarProdutos();
+    closeModal('productModal');
+    renderProductsTable();
+    renderDashboard();
+    showToast('Produto salvo!');
+  } catch (err) {
+    showToast(err.message, false);
+  } finally {
+    saveBtn.disabled = false;
+  }
+});
+
+async function deleteProduct(id){
+  if(!confirm('Excluir este produto definitivamente?')) return;
+  const row = document.getElementById('prow-'+id);
+  if (row) row.classList.add('row-out');
+  try {
+    checarSupabase();
+    const { error } = await supabaseClient.from('produtos').delete().eq('id', id);
+    if (error) throw new Error(error.message);
+    setTimeout(async ()=>{
+      await carregarProdutos();
+      renderProductsTable();
+      renderDashboard();
+      renderCategoryGrid();
+      showToast('Produto removido!');
+    }, 300);
+  } catch (err) {
+    showToast(err.message, false);
+  }
+}
+
+/* ================================================================
+   CATEGORIAS — grid + modal
+   ================================================================ */
+function renderCategoryGrid(){
+  document.getElementById('categoryGrid').innerHTML = CATEGORIES.map(c=>{
+    const count = PRODUCTS.filter(p=>p.categoria===c.chave).length;
+    return `
+    <div class="cat-card">
+      <div class="cat-card-top">
+        <div class="cat-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">${catIcon(c.icone)}</svg></div>
+        <div class="cat-card-name">${esc(c.nome)}</div>
+      </div>
+      <div class="cat-card-count">${count} produto${count===1?'':'s'} cadastrado${count===1?'':'s'}</div>
+      <div class="cat-card-actions">
+        <button data-act="edit" data-id="${c.id}">Editar</button>
+        <button class="del" data-act="del" data-id="${c.id}">Excluir</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('#categoryGrid [data-act]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = parseInt(btn.dataset.id);
+      if(btn.dataset.act==='del'){
+        if(!confirm('Excluir esta categoria? Produtos vinculados a ela deixarão de aparecer corretamente.')) return;
+        try {
+          checarSupabase();
+          const { error } = await supabaseClient.from('categorias').delete().eq('id', id);
+          if (error) throw new Error(error.message);
+          await carregarCategorias();
+          renderCategoryGrid();
+          renderDashboard();
+          renderProductCategorySelect();
+          showToast('Categoria removida!');
+        } catch (err) { showToast(err.message, false); }
+      } else {
+        const c = CATEGORIES.find(c=>c.id===id);
+        editingCategoryId = id;
+        document.getElementById('cName').value = c.nome;
+        document.getElementById('cIcon').value = c.icone;
+        document.getElementById('categoryModalTitle').textContent = 'Editar Categoria';
+        openModal('categoryModal');
+      }
+    });
+  });
+}
+
+let editingCategoryId = null;
+document.getElementById('newCategoryBtn').addEventListener('click', ()=>{
+  editingCategoryId = null;
+  document.getElementById('categoryForm').reset();
+  document.getElementById('categoryModalTitle').textContent = 'Nova Categoria';
+  openModal('categoryModal');
+});
+
+document.getElementById('categoryForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const nome = document.getElementById('cName').value;
+  const icone = document.getElementById('cIcon').value;
+
+  try {
+    checarSupabase();
+    if(editingCategoryId){
+      const { error } = await supabaseClient.from('categorias').update({ nome, icone }).eq('id', editingCategoryId);
+      if (error) throw new Error(error.message);
+    } else {
+      const { error } = await supabaseClient.from('categorias').insert({ nome, icone, chave: gerarChaveCategoria(nome) });
+      if (error) throw new Error(error.message);
+    }
+    await carregarCategorias();
+    closeModal('categoryModal');
+    renderCategoryGrid();
+    renderProductCategorySelect();
+    renderDashboard();
+    showToast('Categoria salva!');
+  } catch (err) {
+    showToast(err.message, false);
+  }
+});
+
+/* ================================================================
+   PROMOÇÕES — lista + modal
+   ================================================================ */
+function renderPromoGrid(){
+  document.getElementById('promoGrid').innerHTML = PROMOTIONS.length ? PROMOTIONS.map(pr=>`
+    <div class="promo-card">
+      <div class="promo-info">
+        <h4>${esc(pr.titulo)}</h4>
+        <p>${pr.produtoIds.length} produto${pr.produtoIds.length===1?'':'s'} participante${pr.produtoIds.length===1?'':'s'} · ${fmtDate(pr.dataInicio)} a ${fmtDate(pr.dataFim)}</p>
+      </div>
+      <div class="promo-percent">${pr.desconto}% OFF</div>
+    </div>
+  `).join('') : `<p style="font-size:12.5px; color:var(--text-faint);">Nenhuma promoção cadastrada ainda.</p>`;
+}
+
+document.getElementById('newPromoBtn').addEventListener('click', ()=>{
+  document.getElementById('promoForm').reset();
+  document.getElementById('promoProductList').innerHTML = PRODUCTS.map(p=>`
+    <label><input type="checkbox" value="${p.id}"> ${esc(p.nome)}</label>
+  `).join('') || '<p style="font-size:11.5px; color:var(--text-faint);">Cadastre produtos primeiro.</p>';
+  openModal('promoModal');
+});
+
+document.getElementById('promoForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const checked = Array.from(document.querySelectorAll('#promoProductList input:checked')).map(c=>parseInt(c.value));
+  try {
+    checarSupabase();
+    const { data: promo, error } = await supabaseClient.from('promocoes').insert({
+      titulo: document.getElementById('prTitle').value,
+      desconto: parseInt(document.getElementById('prPercent').value),
+      dataInicio: document.getElementById('prStart').value,
+      dataFim: document.getElementById('prEnd').value,
+    }).select().single();
+    if (error) throw new Error(error.message);
+    if (checked.length) {
+      const { error: errVinculos } = await supabaseClient
+        .from('promocao_produtos')
+        .insert(checked.map(produtoId => ({ promocao_id: promo.id, produto_id: produtoId })));
+      if (errVinculos) throw new Error(errVinculos.message);
+    }
+    await carregarPromocoes();
+    closeModal('promoModal');
+    renderPromoGrid();
+    showToast('Promoção criada!');
+  } catch (err) {
+    showToast(err.message, false);
+  }
+});
+
+/* ================================================================
+   PEDIDOS / CLIENTES — tabelas de demonstração
+   ================================================================ */
+function renderOrdersTable(){
+  const statusMap = { entregue:['Entregue','badge-ok'], preparo:['Em preparo','badge-progress'], pendente:['Pendente','badge-pending'], cancelado:['Cancelado','badge-off'] };
+  document.getElementById('ordersTableBody').innerHTML = ORDERS.map(o=>{
+    const [label,cls] = statusMap[o.status];
+    return `<tr><td class="cell-name">${o.id}</td><td>${o.client}</td><td>${o.items}</td><td>${fmtPrice(o.total)}</td><td><span class="badge ${cls}">${label}</span></td><td>${o.date}</td></tr>`;
+  }).join('');
+}
+function renderClientsTable(){
+  document.getElementById('clientsTableBody').innerHTML = CLIENTS.map(c=>`
+    <tr><td class="cell-name">${c.name}</td><td>${c.phone}</td><td>${c.orders}</td><td>${fmtPrice(c.total)}</td></tr>
+  `).join('');
+}
+
+/* ================================================================
+   CONFIGURAÇÕES — conectadas ao banco (registro único)
+   ================================================================ */
+function preencherFormularioConfiguracoes(){
+  if(!CONFIG) return;
+  document.getElementById('logoFileName').textContent = CONFIG.logo ? 'Logo cadastrada — envie outra para substituir' : 'Clique para enviar uma imagem';
+  document.getElementById('bannerFileName').textContent = CONFIG.banner ? 'Banner cadastrado — envie outro para substituir' : 'Clique para enviar uma imagem';
+  document.getElementById('settingsMainColor').value = CONFIG.corPrincipal || '#d4af37';
+  document.getElementById('settingsWhatsapp').value = CONFIG.whatsapp || '';
+  document.getElementById('settingsAddress').value = CONFIG.endereco || '';
+  document.getElementById('settingsHours').value = CONFIG.horario || '';
+  document.getElementById('settingsInstagram').value = CONFIG.instagram || '';
+  document.getElementById('settingsFooter').value = CONFIG.rodape || '';
+}
+
+document.getElementById('logoInput').addEventListener('change', function(){
+  document.getElementById('logoFileName').textContent = this.files[0] ? this.files[0].name : 'Clique para enviar uma imagem';
+});
+document.getElementById('bannerInput').addEventListener('change', function(){
+  document.getElementById('bannerFileName').textContent = this.files[0] ? this.files[0].name : 'Clique para enviar uma imagem';
+});
+document.getElementById('pImage').addEventListener('change', function(){
+  document.getElementById('pImageName').textContent = this.files[0] ? this.files[0].name : 'Enviar imagem';
+});
+
+document.getElementById('saveSettingsBtn').addEventListener('click', async ()=>{
+  try {
+    checarSupabase();
+    const payload = {
+      corPrincipal: document.getElementById('settingsMainColor').value,
+      whatsapp: document.getElementById('settingsWhatsapp').value,
+      endereco: document.getElementById('settingsAddress').value,
+      horario: document.getElementById('settingsHours').value,
+      instagram: document.getElementById('settingsInstagram').value,
+      rodape: document.getElementById('settingsFooter').value,
+    };
+    const logoFile = document.getElementById('logoInput').files[0];
+    const bannerFile = document.getElementById('bannerInput').files[0];
+    if (logoFile) payload.logo = await uploadImagem(logoFile, 'config');
+    if (bannerFile) payload.banner = await uploadImagem(bannerFile, 'config');
+
+    const { error } = await supabaseClient.from('configuracoes').update(payload).eq('id', 1);
+    if (error) throw new Error(error.message);
+    await carregarConfiguracoes();
+    preencherFormularioConfiguracoes();
+    showToast('Configurações salvas!');
+  } catch (err) {
+    showToast(err.message, false);
+  }
+});
+
+/* ================================================================
+   APARÊNCIA — opções visuais (protótipo, sem persistência no banco)
+   ================================================================ */
+document.querySelectorAll('.theme-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('.theme-opt').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+  });
+});
+document.querySelectorAll('.swatch').forEach(sw=>{
+  sw.addEventListener('click', ()=>{
+    document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    sw.classList.add('active');
+  });
+});
+document.querySelectorAll('.style-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('.style-opt').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+  });
+});
+document.getElementById('animSwitch').addEventListener('click', function(){ this.classList.toggle('on'); });
+document.getElementById('glassSwitch').addEventListener('click', function(){ this.classList.toggle('on'); });
+document.getElementById('saveAppearanceBtn').addEventListener('click', ()=> showToast('Aparência salva!'));
+
+/* ================================================================
+   CARREGAMENTO DE DADOS — busca tudo da API
+   ================================================================ */
+async function carregarCategorias(){
+  checarSupabase();
+  const { data, error } = await supabaseClient.from('categorias').select('*').order('nome', { ascending: true });
+  if (error) throw new Error(error.message);
+  CATEGORIES = data || [];
+}
+async function carregarProdutos(){
+  checarSupabase();
+  const { data, error } = await supabaseClient.from('produtos').select('*').order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  PRODUCTS = data || [];
+}
+async function carregarPromocoes(){
+  checarSupabase();
+  const { data, error } = await supabaseClient.from('promocoes').select('*, promocao_produtos(produto_id)').order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  PROMOTIONS = (data || []).map(pr => ({ ...pr, produtoIds: (pr.promocao_produtos || []).map(x => x.produto_id) }));
+}
+async function carregarConfiguracoes(){
+  checarSupabase();
+  const { data, error } = await supabaseClient.from('configuracoes').select('*').eq('id', 1).maybeSingle();
+  if (error) throw new Error(error.message);
+  CONFIG = data || null;
+}
+
+/* ================================================================
+   INICIALIZAÇÃO DO PAINEL — chamada após o login simulado
+   ================================================================ */
+async function initAdmin(){
+  try {
+    await Promise.all([carregarCategorias(), carregarProdutos(), carregarPromocoes(), carregarConfiguracoes()]);
+  } catch (err) {
+    showToast('Não foi possível conectar ao Supabase: ' + err.message, false);
+  }
+  renderDashboard();
+  renderProductCategorySelect();
+  renderProductsTable();
+  renderCategoryGrid();
+  renderPromoGrid();
+  renderOrdersTable();
+  renderClientsTable();
+  preencherFormularioConfiguracoes();
+}
+</script>
+</body>
+</html>

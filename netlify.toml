@@ -1,0 +1,17 @@
+# Deploy do FRONTEND (catálogo + painel) na Netlify.
+# Não há backend: crie frontend/supabase-config.js com a URL e a chave anon
+# do seu projeto Supabase antes do deploy (veja supabase-config.example.js).
+[build]
+  base = "frontend"
+  publish = "."
+  command = "echo 'Sem build necessário — arquivos estáticos.'"
+
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
